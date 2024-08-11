@@ -1,10 +1,14 @@
 const express = require("express");
+const cors = require("cors");
+
 const app = express();
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 const postRoute = require("./routes/posts");
+const uploadRoute = require("./routes/upload");
 const PORT =  8000;
 const mongoose = require("mongoose");
+const path = require("path")
 require("dotenv").config();
 
 mongoose.connect(
@@ -24,11 +28,23 @@ mongoose.connect(
     console.log(err);
 });
 
+// CORS設定
+app.use(cors({
+    origin: "http://localhost:3000", // フロントエンドのURL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+  }));
+
 // ミドルウェア
+app.use("/images", express.static(path.join(__dirname, "public/images")));
 app.use(express.json());
 app.use("/api/users", userRoute);
-app.use("/api/auth", authRoute);  // ここでauthRouteを使用しています
+app.use("/api/auth", authRoute);  // ここでauthRouteを使用
 app.use("/api/posts", postRoute);
+app.use("/api/upload", uploadRoute);
+app.use("/images", express.static("public/images"));
+
+
 
 app.get("/", (req, res) => {
     res.send("hello express");

@@ -2,6 +2,7 @@ const router = require("express").Router();
 const Post = require("../models/Post");
 const User = require("../models/User");
 
+
 // router.get("/", (req,res) => {
 //     res.send("posts router");
 // });
@@ -17,26 +18,27 @@ router.post("/", async (req, res) => {
 });
 
 //投稿を更新
-router.put("/:id", async(req, res) => {
+router.put("/:id", async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id);
-        if(post.userId === req.body.userId){
-            await post.updateOne({
-                $set: req.body,
-            });
-            return res.status(200).json("edited");
-        } else {
-            return res.status(403).json("cannnot edit other peoples post");
-        }
-    } catch (err){
-        return res.status(403).json(err);
+      const post = await Post.findById(req.params.id);
+      if (post.userId === req.body.userId) {
+        await post.updateOne({ $set: req.body });
+        return res.status(200).json("Post edited successfully");
+      } else {
+        return res.status(403).json("You can only edit your own posts");
+      }
+    } catch (err) {
+      return res.status(500).json(err);
     }
-});
+  });
 
 //delete
 router.delete("/:id", async(req, res) => {
     try {
         const post = await Post.findById(req.params.id);
+        // console.log("Post User ID:", post.userId);
+        // console.log("Request Body User ID:", req.body.userId);
+
         if(post.userId === req.body.userId){
             await post.deleteOne();
             return res.status(200).json("deleted");
