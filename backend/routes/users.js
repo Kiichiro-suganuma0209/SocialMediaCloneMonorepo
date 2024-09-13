@@ -1,75 +1,3 @@
-// const router = require("express").Router();
-// const User = require("../models/User");
-// const multer = require("multer");
-
-// // Multer設定
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//       cb(null, "public/images");
-//     },
-//     filename: (req, file, cb) => {
-//       cb(null, req.body.name);
-//     },
-//   });
-
-//   // const upload = multer({ storage: storage });
-//   const upload = multer({ storage });
-
-
-//   router.post("uploadCover", upload.single("file"), async(req, res) => {
-//     try{
-//       const userId = req.body.userId;
-//       const user = await User.findById(userId);
-
-//       if(!user){
-//         return res.status(404).json("User not found");
-//       }
-
-//       user.coverPicture = req.file.filename;
-//       await user.save();
-//       return res.status(200).json("cover img uploaded");
-
-//     }catch(err){
-//       console.error(err);
-//       return res.status(500).json(err);
-//     }
-//   } );
-
-// const router = require("express").Router();
-// const User = require("../models/User");
-// const multer = require("multer");
-// const path = require("path");
-
-// // Multer設定
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//       cb(null, "public/images");
-//     },
-//     filename: (req, file, cb) => {
-//       cb(null, Date.now() + path.extname(file.originalname)); // ファイル名をタイムスタンプで一意にする
-//     },
-// });
-
-// const upload = multer({ storage });
-
-// // カバー画像のアップロードエンドポイント
-// router.post("/uploadCover", upload.single("file"), async (req, res) => {
-//     try {
-//         const userId = req.body.userId;
-//         const user = await User.findById(userId);
-
-//         if (!user) {
-//             return res.status(404).json("User not found");
-//         }
-
-//         user.coverPicture = req.file.filename;
-//         await user.save();
-//         return res.status(200).json({ filename: req.file.filename });
-//     } catch (err) {
-//         console.error(err);
-//         return res.status(500).json(err);
-//     }
-// });
 const router = require("express").Router();
 const User = require("../models/User");
 const multer = require("multer");
@@ -125,21 +53,21 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     }
 });
   // ファイルアップロードエンドポイント
-router.post("/upload", upload.single("file"), async (req, res) => {
-    try {
-      if (req.body.userId === req.body.id || req.body.isAdmin) {
-        const user = await User.findById(req.body.id);
-        user.coverPicture = req.body.name;
-        await user.save();
-        return res.status(200).json("ファイルがアップロードされました");
-      } else {
-        return res.status(403).json("自身のアカウントでないため更新できません");
-      }
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json(err);
-    }
-  });
+// router.post("/upload", upload.single("file"), async (req, res) => {
+//     try {
+//       if (req.body.userId === req.body.id || req.body.isAdmin) {
+//         const user = await User.findById(req.body.id);
+//         user.coverPicture = req.body.name;
+//         await user.save();
+//         return res.status(200).json("ファイルがアップロードされました");
+//       } else {
+//         return res.status(403).json("自身のアカウントでないため更新できません");
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       return res.status(500).json(err);
+//     }
+//   });
 
 
 //CRUD
@@ -187,21 +115,38 @@ router.delete("/:id", async(req, res) => {
 // });
 
 //95 クエリで情報を取得
-router.get("/", async(req, res) => {
-    const userId = req.query.userId;
-    const username = req.query.username;
-    try{
-        const user = userId ? await User.findById(userId) : await User.findOne({username: username});
-        const { password, updatedAt, ...other } = user._doc;
-        return res.status(200).json(other);
-    }catch(err){
-        return res.status(500).json(err);
-    }
+// router.get("/", async(req, res) => {
+//     const userId = req.query.userId;
+//     const username = req.query.username;
+//     try{
+//         const user = userId ? await User.findById(userId) : await User.findOne({username: username});
+//         const { password, updatedAt, ...other } = user._doc;
+//         return res.status(200).json(other);
+//     }catch(err){
+//         return res.status(500).json(err);
+//     }
+// });
+router.get("/", async (req, res) => {
+  const userId = req.query.userId;
+  const username = req.query.username;
+  try {
+      const user = userId 
+          ? await User.findById(userId) 
+          : await User.findOne({ username: username });
+      if (!user) {
+          return res.status(404).json("User not found");
+      }
+      const { password, updatedAt, ...other } = user._doc;
+      return res.status(200).json(other);
+  } catch (err) {
+      return res.status(500).json(err);
+  }
 });
+
 
 // 23. ユーザーのフォロー
 router.put("/:id/follow", async (req, res)=> {
-    if(req.body.useId !== req.params.id){
+    if(req.body.userId !== req.params.id){
         try {
             //これからフォローする相手の情報
             const user = await User.findById(req.params.id);
@@ -236,7 +181,7 @@ router.put("/:id/follow", async (req, res)=> {
 
 // 25. ユーザーのフォローを外す
 router.put("/:id/unfollow", async (req, res)=> {
-    if(req.body.useId !== req.params.id){
+    if(req.body.userId !== req.params.id){
         try {
             //これからフォローする相手の情報
             const user = await User.findById(req.params.id);

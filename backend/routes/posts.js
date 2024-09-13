@@ -92,15 +92,40 @@ router.put("/:id/like", async (req, res)=> {
 );
 
 //94 profile専用
+// router.get("/profile/:username", async(req, res)=> {
+//     console.log(req.params.username)
+//     try{
+//         const user = await User.findOne({username: req.params.username});
+//         const posts = await Post.find({ userId: user._id});
+//         return res.status(200).json(posts)
+//     } catch (err){
+//         return res.status(500).json(err);
+//     }
+// });
+
+// 一旦コメントアウト！！！！！
 router.get("/profile/:username", async(req, res)=> {
     try{
-        const user = await User.findOne({username: req.params.username});
-        const posts = await Post.find({ userId: user._id});
-        return res.status(200).json(posts)
+        // デバッグ用のログを追加して、パラメータが正しく渡されているか確認
+        console.log("Fetching posts for user:", req.params.username);
+        
+        const user = await User.findOne({ username: req.params.username });
+        if (!user) {
+            return res.status(404).json("User not found");
+        }
+
+        const posts = await Post.find({ userId: user._id });
+        return res.status(200).json(posts);
     } catch (err){
+        console.error("Error fetching posts for profile:", err);
         return res.status(500).json(err);
     }
 });
+// router.get("/profile/:username", async(req, res)=> {
+//     console.log("Fetching posts for user:", req.params.username);
+// });
+
+
 
 //33 timeline post 
 router.get("/timeline/:userId", async(req, res)=> {

@@ -66,6 +66,8 @@ const UserSchema = new mongoose.Schema({
         max: 50,
 
     },
+    resetToken: { type: String },  // トークンを保存
+    resetTokenExpiration: { type: Date },  // 有効期限を保存
 },
 
 {timestamps: true}
