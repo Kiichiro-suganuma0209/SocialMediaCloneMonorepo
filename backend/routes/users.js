@@ -72,7 +72,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
 
 //CRUD
 //ユーザー情報の更新
-router.put("/:id", async(req, res) => {
+router.put("/update-user/:id", async(req, res) => {
     if(req.body.userId === req.params.id || req.body.isAdmin){
         try{
             const user = await User.findByIdAndUpdate(req.params.id, {
@@ -143,7 +143,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-
 // 23. ユーザーのフォロー
 router.put("/:id/follow", async (req, res)=> {
     if(req.body.userId !== req.params.id){
@@ -213,45 +212,53 @@ router.put("/:id/unfollow", async (req, res)=> {
     } else {
         return res.status(500).json("自分自身をアンフォローできません");
     }
+});
+router.get("/followers/:id", async (req, res) => {
+    try {
+      const user = await User.findById(req.params.id);
+      const followers = await Promise.all(
+        user.followers.map((followerId) => {
+          return User.findById(followerId);
+        })
+      );
+      let followerList = [];
+      followers.map((follower) => {
+        const { _id, username, profilePicture } = follower;
+        followerList.push({ _id, username, profilePicture });
+      });
+      res.status(200).json(followerList);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  });
+  
+  // フォロー中のアカウントリストを取得
+  router.get("/followings/:id", async (req, res) => {
+    try {
+      const user = await User.findById(req.params.id);
+      const followings = await Promise.all(
+        user.followings.map((followingId) => {
+          return User.findById(followingId);
+        })
+      );
+      let followingList = [];
+      followings.map((following) => {
+        const { _id, username, profilePicture } = following;
+        followingList.push({ _id, username, profilePicture });
+      });
+      res.status(200).json(followingList);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  });
 
-    router.get("/:id/followers", async (req, res) => {
-        try {
-          const user = await User.findById(req.params.id);
-          const followers = await Promise.all(
-            user.followers.map((followerId) => {
-              return User.findById(followerId);
-            })
-          );
-          let followerList = [];
-          followers.map((follower) => {
-            const { _id, username, profilePicture } = follower;
-            followerList.push({ _id, username, profilePicture });
-          });
-          res.status(200).json(followerList);
-        } catch (err) {
-          res.status(500).json(err);
-        }
-      });
-      
-      // フォロー中のアカウントリストを取得
-      router.get("/:id/followings", async (req, res) => {
-        try {
-          const user = await User.findById(req.params.id);
-          const followings = await Promise.all(
-            user.followings.map((followingId) => {
-              return User.findById(followingId);
-            })
-          );
-          let followingList = [];
-          followings.map((following) => {
-            const { _id, username, profilePicture } = following;
-            followingList.push({ _id, username, profilePicture });
-          });
-          res.status(200).json(followingList);
-        } catch (err) {
-          res.status(500).json(err);
-        }
-      });
+router.get("/test", (req, res) => {
+    res.send("Testing users, endpoint is working");
+
+});
+router.put("/test",(req, res) => {
+    res.status(200).json({ message: "Simple USER PUT request successful" });
+
 });
 
 
