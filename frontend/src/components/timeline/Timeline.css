@@ -1,0 +1,22 @@
+.timelineWrapper {
+    padding: 10px;
+  }
+  
+  .timelineWrapper.gridView {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+  }
+  
+  .postWrapper {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+    transition: transform 0.2s ease;
+  }
+  
+  .timelineWrapper.gridView .postWrapper:hover {
+    transform: scale(1.05);
+  }
+  
