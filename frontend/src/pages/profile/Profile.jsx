@@ -1,18 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import "./Profile.css";
 // import axios from "axios";
 import axios from "../../axios";
-
 import Topbar from "../../components/topbar/Topbar";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Timeline from "../../components/timeline/Timeline";
 import { useParams } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function Profile() {
-  // PUBLIC_FOLDER を環境変数から取得
   const PUBLIC_FOLDER = process.env.REACT_APP_PUBLIC_FOLDER;
 
-  const [user, setUser] = useState({});
+  // const [user, setUser] = useState({});
+  // const [file, setFile] = useState(null);
+  // const [followers, setFollowers] = useState([]);
+  const { user: currentUser } = useContext(AuthContext); // 現在ログインしているユーザーを取得
+  console.log("Current user in Sidebar:", currentUser);
+
+  const [user, setUser] = useState(currentUser); // デフォルトではログインしているユーザーを表示
   const [file, setFile] = useState(null);
   const [followers, setFollowers] = useState([]);
 
@@ -26,30 +31,60 @@ export default function Profile() {
   }, [username]);
 
   // ユーザー情報を取得
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     try {
+  //       const response = await axios.get(`/users?username=${username}`);
+  //       console.log("User data:", response.data); // デバッグ用
+  //       setUser(response.data);
+  //     } catch (error) {
+  //       console.error(
+  //         "Error fetching user:",
+  //         error.response ? error.response.data : error.message
+  //       );
+  //     }
+  //   };
+  //   fetchUser();
+  // }, [username]);
+
+  // useEffect(() => {
+  //   if (username && username !== currentUser.username) {
+  //     const fetchUser = async () => {
+  //       try {
+  //         const response = await axios.get(`/users?username=${username}`);
+  //         setUser(response.data);
+  //       } catch (error) {
+  //         console.error(
+  //           "Error fetching user:",
+  //           error.response ? error.response.data : error.message
+  //         );
+  //       }
+  //     };
+  //     fetchUser();
+  //   } else {
+  //     setUser(currentUser); // ログインしているユーザーのプロフィールを表示
+  //   }
+  // }, [username, currentUser]);
   useEffect(() => {
     const fetchUser = async () => {
-      try {
-        const response = await axios.get(`/users?username=${username}`);
-        console.log("User data:", response.data); // デバッグ用
-        setUser(response.data);
-      } catch (error) {
-        console.error(
-          "Error fetching user:",
-          error.response ? error.response.data : error.message
-        );
+      const username =
+        currentUser?.username || currentUser?.user?.username || ""; // 正しいプロパティを参照
+      if (username) {
+        try {
+          const response = await axios.get(`/users?username=${username}`);
+          setUser(response.data);
+        } catch (error) {
+          console.error(
+            "Error fetching user:",
+            error.response ? error.response.data : error.message
+          );
+        }
+      } else {
+        console.error("Username is undefined or empty");
       }
     };
     fetchUser();
-  }, [username]);
-
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     const res = await axios.get(`/users?username=${username}`);
-
-  //     setUser(res.data);
-  //   };
-  //   fetchUser();
-  // }, []);
+  }, [currentUser]);
 
   // ファイル変更のハンドリング
   const handleFileChange = (e) => {

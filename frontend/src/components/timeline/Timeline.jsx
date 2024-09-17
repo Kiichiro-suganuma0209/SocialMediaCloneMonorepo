@@ -41,7 +41,7 @@ export default function Timeline({
           throw new Error("No valid username or user ID");
         }
 
-        console.log("Fetching posts for:", username || user._id);
+        console.log("Fetching posts for:", user || user._id);
 
         const response = username
           ? // ? await axios.get(`/posts/profile/${username}`)

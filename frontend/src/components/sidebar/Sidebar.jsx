@@ -12,13 +12,17 @@ import {
   SearchOutlined,
   Settings,
 } from "@mui/icons-material";
-import React from "react";
+import React, { useContext } from "react";
 import "./Sidebar.css";
 import { Users } from "../../dummyData";
 import CloseFriend from "../closeFriend/CloseFriend";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function Sidebar() {
+  const { user: currentUser } = useContext(AuthContext); // 現在ログインしているユーザーを取得
+  console.log("Current user:", currentUser);
+
   return (
     <div className="sidebar">
       <div className="sidebarWrapper">
@@ -49,7 +53,7 @@ export default function Sidebar() {
           <li className="sidebarListItem">
             <Person className="sidebarIcon" />
             <Link
-              to="/profile/shincode"
+              to={`/profile/${currentUser.username}`}
               style={{ textDecoration: "none", color: "black" }}
             >
               <span className="sidebarListItemText">プロフィール</span>
