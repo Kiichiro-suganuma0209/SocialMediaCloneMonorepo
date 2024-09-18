@@ -9,13 +9,14 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useContext } from "react";
-import { AuthContext } from "./context/AuthContext";
+import { AuthContext, AuthContextProvider } from "./context/AuthContext";
 import Topbar from "./components/topbar/Topbar"; // Topbarをインポート
 
 function App() {
   const { user } = useContext(AuthContext);
 
   return (
+
     <Router>
       {/* ログインしている場合のみTopbarを表示 */}
       {/* {user && <Topbar />}  */}
@@ -39,6 +40,7 @@ function App() {
         <Route path="/profile/:username" element={user ? <Profile /> : <Navigate to="/login" />} />
       </Routes>
     </Router>
+
   );
 }
 

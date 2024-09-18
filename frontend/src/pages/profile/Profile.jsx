@@ -11,11 +11,8 @@ import { AuthContext } from "../../context/AuthContext";
 export default function Profile() {
   const PUBLIC_FOLDER = process.env.REACT_APP_PUBLIC_FOLDER;
 
-  // const [user, setUser] = useState({});
-  // const [file, setFile] = useState(null);
-  // const [followers, setFollowers] = useState([]);
   const { user: currentUser } = useContext(AuthContext); // 現在ログインしているユーザーを取得
-  console.log("Current user in Sidebar:", currentUser);
+  // console.log("Current user in Sidebar:", currentUser);
 
   const [user, setUser] = useState(currentUser); // デフォルトではログインしているユーザーを表示
   const [file, setFile] = useState(null);
@@ -30,41 +27,6 @@ export default function Profile() {
     }
   }, [username]);
 
-  // ユーザー情報を取得
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       const response = await axios.get(`/users?username=${username}`);
-  //       console.log("User data:", response.data); // デバッグ用
-  //       setUser(response.data);
-  //     } catch (error) {
-  //       console.error(
-  //         "Error fetching user:",
-  //         error.response ? error.response.data : error.message
-  //       );
-  //     }
-  //   };
-  //   fetchUser();
-  // }, [username]);
-
-  // useEffect(() => {
-  //   if (username && username !== currentUser.username) {
-  //     const fetchUser = async () => {
-  //       try {
-  //         const response = await axios.get(`/users?username=${username}`);
-  //         setUser(response.data);
-  //       } catch (error) {
-  //         console.error(
-  //           "Error fetching user:",
-  //           error.response ? error.response.data : error.message
-  //         );
-  //       }
-  //     };
-  //     fetchUser();
-  //   } else {
-  //     setUser(currentUser); // ログインしているユーザーのプロフィールを表示
-  //   }
-  // }, [username, currentUser]);
   useEffect(() => {
     const fetchUser = async () => {
       const username =
@@ -137,8 +99,8 @@ export default function Profile() {
           <section className="profileCover">
             <h1 className="hello">Hi</h1>
             {/* デバッグ用: PUBLIC_FOLDER と user.coverPicture の確認 */}
-            {console.log("PUBLIC_FOLDER:", PUBLIC_FOLDER)}
-            {console.log("user.coverPicture:", user.coverPicture)}
+            {/* {console.log("PUBLIC_FOLDER:", PUBLIC_FOLDER)} */}
+            {/* {console.log("user.coverPicture:", user.coverPicture)} */}
 
             <img
               src={

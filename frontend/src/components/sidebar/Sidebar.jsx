@@ -21,7 +21,7 @@ import { AuthContext } from "../../context/AuthContext";
 
 export default function Sidebar() {
   const { user: currentUser } = useContext(AuthContext); // 現在ログインしているユーザーを取得
-  console.log("Current user:", currentUser);
+  // console.log("Current user:", currentUser);
 
   return (
     <div className="sidebar">

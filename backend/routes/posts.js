@@ -92,16 +92,16 @@ router.put("/:id/like", async (req, res)=> {
 );
 
 //94 profile専用
-// router.get("/profile/:username", async(req, res)=> {
-//     console.log(req.params.username)
-//     try{
-//         const user = await User.findOne({username: req.params.username});
-//         const posts = await Post.find({ userId: user._id});
-//         return res.status(200).json(posts)
-//     } catch (err){
-//         return res.status(500).json(err);
-//     }
-// });
+router.get("/profile/:username", async(req, res)=> {
+    console.log(req.params.username)
+    try{
+        const user = await User.findOne({username: req.params.username});
+        const posts = await Post.find({ userId: user._id});
+        return res.status(200).json(posts)
+    } catch (err){
+        return res.status(500).json(err);
+    }
+});
 
 // 一旦コメントアウト！！！！！
 router.get("/profile/:username", async(req, res)=> {
