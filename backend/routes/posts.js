@@ -103,30 +103,6 @@ router.get("/profile/:username", async(req, res)=> {
     }
 });
 
-// 一旦コメントアウト！！！！！
-router.get("/profile/:username", async(req, res)=> {
-    try{
-        // デバッグ用のログを追加して、パラメータが正しく渡されているか確認
-        console.log("Fetching posts for user:", req.params.username);
-        
-        const user = await User.findOne({ username: req.params.username });
-        if (!user) {
-            return res.status(404).json("User not found");
-        }
-
-        const posts = await Post.find({ userId: user._id });
-        return res.status(200).json(posts);
-    } catch (err){
-        console.error("Error fetching posts for profile:", err);
-        return res.status(500).json(err);
-    }
-});
-// router.get("/profile/:username", async(req, res)=> {
-//     console.log("Fetching posts for user:", req.params.username);
-// });
-
-
-
 //33 timeline post 
 router.get("/timeline/:userId", async(req, res)=> {
     try{
@@ -138,7 +114,14 @@ router.get("/timeline/:userId", async(req, res)=> {
                 return Post.find({ userId: friendId});
             })
         );
-        return res.status(200).json(userPosts.concat(...friendPosts))
+
+        const allPosts = userPosts.concat(...friendPosts).sort((a, b) => {
+            return new Date(b.createdAt) - new Date(a.createdAt); // 新しい投稿が上に表示される
+          });
+
+        // return res.status(200).json(userPosts.concat(...friendPosts))
+        return res.status(200).json(allPosts);
+
     } catch (err){
         return res.status(500).json(err);
     }
